@@ -105,5 +105,5 @@ if __name__=="__main__":
     except:
         print("Error: 无法启动线程")
     # 登录
-    itchat.auto_login(hotReload=True)  # 不想每次都扫描，登录时预配置
+    itchat.auto_login(hotReload=True,enableCmdQR=True)  # 不想每次都扫描，登录时预配置
     itchat.run()
