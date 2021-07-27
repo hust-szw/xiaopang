@@ -9,7 +9,6 @@ import json
 #这里定义接收到消息所用方法
 @itchat.msg_register(TEXT)
 def simple_reply(msg):
-    itchat.send_msg('已经收到了文本消息，消息内容为%s'%msg['Text'],toUserName=msg['FromUserName'])
     print(msg['FromUserName'],msg['Text'])
     url = "http://api.tianapi.com/txapi/saylove/index?key=4dfffca8c9a947305f91ba5753a9994e"
     print(url)
@@ -60,7 +59,7 @@ def daily_push():
     for people in push_list:
         if((0 in people["push_id"])&(not people["push_state"][0]) ):
             content = get_weather(people)
-            user_name = itchat.search_friends(people["user_name"])[0]["UserName"]
+            user_name = itchat.search_friends(remarkName = people["remark_name"])[0]["UserName"]
             itchat.send_msg(content,toUserName=user_name)
             people["push_state"] = True
 
@@ -81,7 +80,7 @@ if __name__=="__main__":
     push_list=[
         {
             # 我
-            "user_name":"shallwe",
+            "remark_name":"szw",
             "neck_name":"泽泽", #绰号
             "push_state":[False],  #今日推送状态
             "push_id":[0] ,#订阅功能
@@ -90,8 +89,8 @@ if __name__=="__main__":
         },
         {
             # 亭
-            "user_name":"Sweet💕",
             "neck_name":"亭亭", #绰号
+            "remark_name":"lyt",
             "push_state":[False],  #今日推送状态
             "push_id":[0] ,#订阅功能
             "city":"龙泉驿",
@@ -105,5 +104,5 @@ if __name__=="__main__":
     except:
         print("Error: 无法启动线程")
     # 登录
-    itchat.auto_login(hotReload=True,enableCmdQR=True)  # 不想每次都扫描，登录时预配置
+    itchat.auto_login(hotReload=True)  # 不想每次都扫描，登录时预配置
     itchat.run()
