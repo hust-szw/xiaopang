@@ -1,3 +1,4 @@
+# coding=utf-8
 import itchat
 from itchat.content import *
 import threading
@@ -90,7 +91,7 @@ def clock_msg():
                 event['function']()
         if (now_str=="00:00:00"):#重置每条消息的推送状态
             for people in push_list:
-                people["push_state"]:[False]
+                people["push_state"]=[False]
             print("0点重置")
         time.sleep(1)
 
