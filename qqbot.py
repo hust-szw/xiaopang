@@ -17,7 +17,7 @@ def msg_reply(msg):
             menu = "你好呀，我是雨泽小朋友，请问喊我有什么事？目前爸爸妈妈只教会了我以下技能哦~\n" \
                    "(你可以选择前面的序号让我来给你展示~)\n" \
                    "0：雨泽成长记录\n" \
-                   "1：研招网推送\n"
+                   "1：研招网消息查看\n"
             state = 1
             return menu
         else:
@@ -31,11 +31,25 @@ def msg_reply(msg):
             state = 0
             return jieshao
         elif(info == "1"):
-            pass #爬取考研信息
-            state = 0
+            msg = "请选择查看的学院：\n" \
+                  "1：西安交通大学计算机学院\n" \
+                  "2：西北工业大学软件学院\n"
+            state = 2
+            return msg
         else:
             state = 0
             return("抱歉呦，雨泽还不会这项技能呢~")
+    if (state == 2):
+        if(info == "1"):
+            return_msg = ""
+            xjd_msg = get_xjd_msg()
+            for i in range(10):
+                return_msg =return_msg+xjd_msg[i]+"\n"
+            state = 0
+            return return_msg
+        elif(info == "2"):
+            pass
+        state = 0
 
 #获得交大研招网信息
 def get_xjd():
@@ -46,18 +60,53 @@ def get_xjd():
     # print(html)
     soup = BeautifulSoup(html,"html.parser")
     list = soup.findAll(name="li", attrs={"class" :"clearfix"})
+    for i in range(len(list)):
+        list[i] = str(list[i])
+    # global xjd_last
+    # xjd_last = list
     return list
 
+
 #交大资讯更新推送
-def push_jd():
+def push_xjd():
     global xjd_last
     xjd_latest = get_xjd()
     new_msg = list(set(xjd_latest).difference(set(xjd_last))) #需要被推送更新的
     old_msg = list(set(xjd_last).difference(set(xjd_latest))) #需要被淘汰的信息
+    push_msg = ""
     if(new_msg != []):
+        push_msg ="您有新的院校信息：\n"
         for msg in new_msg:
-            pass #推送
-        xjd_last = xjd_last-old_msg+new_msg
+            temp_msg = BeautifulSoup(msg,"html.parser").li.a
+            title = str(temp_msg['title'])
+            date = str(temp_msg.span.string)
+            href = "http://yz.xjtu.edu.cn/"+str(temp_msg['href'])[3:]
+
+            push_msg =  push_msg+"\n日期："+date+"\n" \
+                        "标题："+title+"\n" \
+                        "链接："+href+"\n"
+            # print(push_msg)
+        xjd_last = list((set(xjd_last)-set(old_msg))|set(new_msg))
+    return push_msg
+
+def get_xjd_msg():
+    i= 1
+    msg_list = []
+    get_list = get_xjd()
+    for msg in get_list:
+        temp_msg = BeautifulSoup(msg, "html.parser").li.a
+        title = str(temp_msg['title'])
+        date = str(temp_msg.span.string)
+        href = "http://yz.xjtu.edu.cn/" + str(temp_msg['href'])[3:]
+        print(href)
+
+        push_msg =  "序号："+ str(i)+"\n" \
+                    "日期：" + date + "\n" \
+                    "标题：" + title + "\n" \
+                    "链接：" + href + "\n"
+        msg_list.append(push_msg)
+        i=i+1
+    return msg_list
 
 #图灵机器人
 def get_response(msg):
