@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 #这里定义接收到消息所用方法
 @itchat.msg_register(TEXT)
 def msg_reply(msg):
+    print(msg)
     info = msg['Text']
     global state
     if (state==0):
